@@ -1,0 +1,206 @@
+@import "tailwindcss";
+
+:root {
+  cursor: crosshair;
+  /* Warm Dark Grey Theme (Stone Palette) */
+  --background: #0c0a09;
+  /* Stone 950 */
+  --foreground: #e7e5e4;
+  /* Stone 200 */
+
+  --primary: #d6d3d1;
+  /* Stone 300 */
+  --primary-foreground: #1c1917;
+
+  --secondary: #292524;
+  /* Stone 800 */
+  --secondary-foreground: #fafaf9;
+
+  --accent: #44403c;
+  /* Stone 700 */
+  --accent-foreground: #fafaf9;
+
+  --destructive: #7f1d1d;
+  /* Red 900 */
+  --destructive-foreground: #fee2e2;
+
+  --card: #1c1917;
+  /* Stone 900 */
+  --card-foreground: #e7e5e4;
+
+  --border: #292524;
+  /* Stone 800 */
+  --input: #292524;
+  --ring: #a8a29e;
+  /* Stone 400 */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-orbitron: var(--font-orbitron);
+}
+
+.font-orbitron {
+  font-family: var(--font-orbitron), sans-serif;
+}
+
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Optional: Scrollbar styling for that hacker feel */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00f0ff;
+}
+
+/* MagicBento Styles using CSS Variables */
+.bento-section {
+  --glow-x: 50%;
+  --glow-y: 50%;
+  --glow-intensity: 0;
+  --glow-radius: 200px;
+  /* --glow-color will be set inline by the component */
+  --border-color: #392e4e;
+  --background-dark: #060010;
+  --white: hsl(0, 0%, 100%);
+  --purple-primary: rgba(132, 0, 255, 1);
+  --purple-glow: rgba(132, 0, 255, 0.2);
+  --purple-border: rgba(132, 0, 255, 0.8);
+}
+
+.card-responsive {
+  grid-template-columns: 1fr;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .card-responsive {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.card--border-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: radial-gradient(var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+      rgba(var(--glow-color), calc(var(--glow-intensity) * 0.8)) 0%,
+      rgba(var(--glow-color), calc(var(--glow-intensity) * 0.4)) 30%,
+      transparent 60%);
+  border-radius: inherit;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.card--border-glow:hover::after {
+  opacity: 1;
+}
+
+.card--border-glow:hover {
+  box-shadow: 0 4px 20px rgba(46, 24, 78, 0.4), 0 0 30px rgba(var(--glow-color), 0.2);
+}
+
+.particle::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: rgba(var(--glow-color), 0.2);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.particle-container:hover {
+  box-shadow: 0 4px 20px rgba(46, 24, 78, 0.2), 0 0 30px rgba(var(--glow-color), 0.2);
+}
+
+.text-clamp-1 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.text-clamp-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 599px) {
+  .card-responsive {
+    grid-template-columns: 1fr;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0.5rem;
+  }
+
+  .card-responsive .card {
+    width: 100%;
+    min-height: 180px;
+  }
+}
+
+@media (pointer: fine) {
+
+  html,
+  body,
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  [role="button"] {
+    cursor: none !important;
+  }
+}
