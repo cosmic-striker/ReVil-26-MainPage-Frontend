@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Orbitron } from "next/font/google"; // Import Orbitron
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
+import { FooterWrapper } from "@/components/layout/FooterWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -51,7 +51,7 @@ export default function RootLayout({
         />
         <Navbar />
         <main className="flex-grow">{children}</main>
-        <Footer />
+        <FooterWrapper />
       </body>
     </html>
   );
