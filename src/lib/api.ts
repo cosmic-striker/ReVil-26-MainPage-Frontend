@@ -46,6 +46,7 @@ export async function fetchUserProfile(token: string): Promise<UserProfile> {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
       },
       credentials: "include",
     });
@@ -76,13 +77,14 @@ export async function fetchUserProfile(token: string): Promise<UserProfile> {
  * Fetch user with registrations from /api/users/me
  */
 export async function fetchUserWithRegistrations(
-  token: string
+  token: string,
 ): Promise<UserWithRegistrations> {
   try {
     const response = await fetch(`${API_URL}/api/users/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
       },
       credentials: "include",
     });
@@ -114,7 +116,7 @@ export async function fetchUserWithRegistrations(
  */
 export async function registerForEvent(
   token: string,
-  registrationData: import("@/types/api").RegistrationData
+  registrationData: import("@/types/api").RegistrationData,
 ): Promise<import("@/types/api").Registration> {
   try {
     const response = await fetch(`${API_URL}/api/registrations`, {
@@ -122,6 +124,7 @@ export async function registerForEvent(
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
       },
       credentials: "include",
       body: JSON.stringify(registrationData),
@@ -150,19 +153,22 @@ export async function registerForEvent(
  */
 export async function fetchEvents(): Promise<import("@/types/api").Event[]> {
   try {
-    
     console.log("Fetching events from API_URL:", API_URL);
     const response = await fetch(`${API_URL}/api/events?eventType=event`, {
       headers: {
         "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
       },
     });
-
+    console.log("Response received:", response);
     if (!response.ok) {
       throw new Error(`Failed to fetch events: ${response.statusText}`);
     }
 
     const data = await response.json();
+    console.log("Parsed data:", data);
+    console.log("data.data:", data.data);
+    console.log("Returning:", data.data || data);
     return data.data || data;
   } catch (error) {
     if (error instanceof TypeError && error.message === "Failed to fetch") {
@@ -180,6 +186,7 @@ export async function fetchWorkshops(): Promise<import("@/types/api").Event[]> {
     const response = await fetch(`${API_URL}/api/events?eventType=workshop`, {
       headers: {
         "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
       },
     });
 
@@ -210,9 +217,9 @@ export function setupAuthListener(
       picture: string;
       role: string;
       checkedIn: boolean;
-    }
+    },
   ) => void,
-  _onError?: (error: Error) => void
+  _onError?: (error: Error) => void,
 ) {
   const handleMessage = (event: MessageEvent) => {
     if (event.data.type === "AUTH_SUCCESS") {
@@ -240,7 +247,7 @@ export function openGoogleAuthPopup(apiUrl: string = API_URL) {
   return window.open(
     `${apiUrl}/auth/google`,
     "Google Login",
-    `width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no,location=no,status=no`
+    `width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no,location=no,status=no`,
   );
 }
 
@@ -261,7 +268,7 @@ import type {
 export async function performCheckIn(
   token: string,
   qrCode: string,
-  checkInType: CheckInType
+  checkInType: CheckInType,
 ): Promise<CheckInResponse> {
   try {
     const response = await fetch(`${API_URL}/api/checkin`, {
@@ -303,7 +310,7 @@ export async function performCheckIn(
  */
 export async function verifyQRCode(
   token: string,
-  qrCode: string
+  qrCode: string,
 ): Promise<CheckInResponse> {
   try {
     const response = await fetch(
@@ -314,7 +321,7 @@ export async function verifyQRCode(
           "Content-Type": "application/json",
         },
         credentials: "include",
-      }
+      },
     );
 
     const data = await response.json();
@@ -337,7 +344,7 @@ export async function verifyQRCode(
  * Get building check-in statistics (admin only)
  */
 export async function getBuildingCheckInStats(
-  token: string
+  token: string,
 ): Promise<BuildingCheckInStats | null> {
   try {
     const response = await fetch(`${API_URL}/api/checkin/stats/building`, {
@@ -365,7 +372,7 @@ export async function getBuildingCheckInStats(
  */
 export async function getEventAttendanceStats(
   token: string,
-  eventId: string
+  eventId: string,
 ): Promise<EventAttendanceStats | null> {
   try {
     const response = await fetch(
@@ -376,7 +383,7 @@ export async function getEventAttendanceStats(
           "Content-Type": "application/json",
         },
         credentials: "include",
-      }
+      },
     );
 
     if (!response.ok) {
