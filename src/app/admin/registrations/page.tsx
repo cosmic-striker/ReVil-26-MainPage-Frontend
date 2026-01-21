@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { API_URL } from "@/lib/api";
 
 interface Registration {
   _id: string;
@@ -52,9 +53,7 @@ export default function AdminRegistrationsPage() {
   const fetchRegistrations = async (token: string) => {
     try {
       const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-        }/api/admin/registrations/recent?limit=100`,
+        `${API_URL}/api/admin/registrations/recent?limit=100`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

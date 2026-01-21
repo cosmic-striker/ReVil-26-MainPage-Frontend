@@ -106,6 +106,11 @@ export interface EventRegistration {
     startTime: string;
     venue: string;
   };
+  isTeamRegistration?: boolean;
+  teamName?: string;
+  teamMembers?: TeamMember[];
+  qrCode?: string;
+  qrCodeImage?: string;
   registrationStatus: "registered" | "confirmed" | "attended" | "cancelled";
   createdAt: Date;
 }
@@ -135,3 +140,52 @@ export interface ApiErrorResponse {
 }
 
 export type ApiResponse<T> = { success: true; data: T } | ApiErrorResponse;
+
+// Check-in Types
+export type CheckInType = "building" | "session";
+
+export interface CheckInRequest {
+  qrCode: string;
+  checkInType: CheckInType;
+}
+
+export interface CheckInUserData {
+  name: string;
+  email: string;
+  picture?: string;
+}
+
+export interface CheckInEventData {
+  _id?: string;
+  title: string;
+  date?: string;
+  venue?: string;
+}
+
+export interface CheckInResponseData {
+  user: CheckInUserData;
+  event?: CheckInEventData;
+  timestamp?: string;
+}
+
+export interface CheckInResponse {
+  success: boolean;
+  alreadyCheckedIn?: boolean;
+  message: string;
+  data?: CheckInResponseData;
+}
+
+export interface BuildingCheckInStats {
+  totalUsers: number;
+  checkedInUsers: number;
+  notCheckedIn: number;
+  checkInRate: number;
+}
+
+export interface EventAttendanceStats {
+  eventTitle: string;
+  totalRegistrations: number;
+  attendedCount: number;
+  notAttendedCount: number;
+  attendanceRate: number;
+}

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { API_URL } from "@/lib/api";
 
 interface Event {
   _id: string;
@@ -44,11 +45,7 @@ export default function AdminEventsPage() {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-        }/api/events`
-      );
+      const response = await fetch(`${API_URL}/api/events`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch events");
@@ -76,17 +73,12 @@ export default function AdminEventsPage() {
     if (!token) return;
 
     try {
-      const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-        }/api/events/${eventId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_URL}/api/events/${eventId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!response.ok) {
         const result = await response.json();
@@ -106,19 +98,14 @@ export default function AdminEventsPage() {
     if (!token) return;
 
     try {
-      const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-        }/api/events/${eventId}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ status: newStatus }),
-        }
-      );
+      const response = await fetch(`${API_URL}/api/events/${eventId}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to update status");
@@ -141,12 +128,7 @@ export default function AdminEventsPage() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    window.open(
-      `${
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-      }/api/admin/export/registrations`,
-      "_blank"
-    );
+    window.open(`${API_URL}/api/admin/export/registrations`, "_blank");
   };
 
   const filteredEvents = events.filter((event) => {

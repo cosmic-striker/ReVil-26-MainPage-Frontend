@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { API_URL } from "@/lib/api";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -10,8 +11,13 @@ export default function LoginPage() {
   // Listen for OAuth popup messages
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      // Accept messages from our own origin (postMessage from popup after redirect)
+      // Log the message for debugging
+      console.log("Received postMessage:", event.origin, event.data);
+
+      // Accept messages from backend (ngrok URL)
+      // In production, validate event.origin matches your backend domain
       if (event.data.type === "AUTH_SUCCESS" && event.data.token) {
+        console.log("Authentication successful, storing token");
         localStorage.setItem("token", event.data.token);
 
         // Store user data if provided (includes profile picture)
@@ -21,6 +27,8 @@ export default function LoginPage() {
 
         // Dispatch storage event for other components to detect
         window.dispatchEvent(new Event("storage"));
+
+        console.log("Redirecting to dashboard");
         router.push("/dashboard");
       }
     };
@@ -39,7 +47,7 @@ export default function LoginPage() {
     const top = window.screen.height / 2 - height / 2;
 
     const popup = window.open(
-      "http://localhost:5000/auth/google",
+      `${API_URL}/auth/google`,
       "Google Login",
       `width=${width},height=${height},left=${left},top=${top}`
     );

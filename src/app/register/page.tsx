@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { API_URL } from "@/lib/api";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -33,7 +34,7 @@ export default function RegisterPage() {
     const top = window.screen.height / 2 - height / 2;
 
     const popup = window.open(
-      "http://localhost:5000/auth/google",
+      `${API_URL}/auth/google`,
       "Google Sign Up",
       `width=${width},height=${height},left=${left},top=${top}`
     );

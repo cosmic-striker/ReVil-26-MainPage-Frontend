@@ -7,13 +7,15 @@ import {
   handleImageError,
   getProfilePicture,
 } from "@/lib/api";
-import { UserWithRegistrations } from "@/types/api";
+import { UserWithRegistrations, EventRegistration } from "@/types/api";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [userData, setUserData] = useState<UserWithRegistrations | null>(null);
   const [loading, setLoading] = useState(true);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
+  const [selectedRegistration, setSelectedRegistration] =
+    useState<EventRegistration | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -58,7 +60,7 @@ export default function DashboardPage() {
           router.push("/login");
         } else if (error.message === "SERVER_OFFLINE") {
           console.warn(
-            "Backend server is offline. Please start the server at http://localhost:5000"
+            "Backend server is offline. Please start the server at http://localhost:5000",
           );
           // Try to use cached user data for basic display
           const cachedUser = localStorage.getItem("user");
@@ -238,7 +240,7 @@ export default function DashboardPage() {
                 Download QR Code
               </button>
               <p className="text-xs text-gray-500 mt-2 text-center">
-                Use this QR code for event check-ins
+                Use this single QR code for all event check-ins
               </p>
             </div>
           </div>
@@ -276,7 +278,7 @@ export default function DashboardPage() {
                   <div className="text-3xl font-bold text-white mb-1">
                     {
                       registrations.filter(
-                        (r) => r.registrationStatus === "attended"
+                        (r) => r.registrationStatus === "attended",
                       ).length
                     }
                   </div>
@@ -310,21 +312,19 @@ export default function DashboardPage() {
                               reg.registrationStatus === "attended"
                                 ? "bg-green-500/20 text-green-400"
                                 : reg.registrationStatus === "confirmed"
-                                ? "bg-blue-500/20 text-blue-400"
-                                : reg.registrationStatus === "cancelled"
-                                ? "bg-red-500/20 text-red-400"
-                                : "bg-yellow-500/20 text-yellow-400"
+                                  ? "bg-blue-500/20 text-blue-400"
+                                  : reg.registrationStatus === "cancelled"
+                                    ? "bg-red-500/20 text-red-400"
+                                    : "bg-yellow-500/20 text-yellow-400"
                             }`}
                           >
                             {reg.registrationStatus.toUpperCase()}
                           </span>
                         </div>
                         <div className="text-sm text-gray-400 space-y-1">
-                          <div>
-                            📅 {new Date(reg.event.date).toLocaleDateString()}
-                          </div>
-                          <div>🕐 {reg.event.startTime}</div>
-                          <div>📍 {reg.event.venue}</div>
+                          {reg.isTeamRegistration && reg.teamName && (
+                            <div>👥 Team: {reg.teamName}</div>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -371,11 +371,117 @@ export default function DashboardPage() {
                 >
                   Browse Workshops
                 </button>
+                {/* Staff Scanner Link - Only show for admin, registration-team, or event-team */}
+                {(user.role === "admin" ||
+                  user.role === "registration-team" ||
+                  user.role === "event-team") && (
+                  <button
+                    className="px-6 py-3 bg-cyan-500/20 border border-cyan-500/50 text-cyan-400 font-bold uppercase text-sm hover:bg-cyan-500/30 hover:border-cyan-400 transition-colors flex items-center gap-2"
+                    onClick={() => router.push("/checkin")}
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"
+                      />
+                    </svg>
+                    QR Scanner
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Registration QR Code Modal */}
+      {selectedRegistration && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedRegistration(null)}
+        >
+          <div
+            className="bg-black border border-primary/30 rounded-lg p-6 max-w-md w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-xl font-bold text-white">Your QR Code</h3>
+                <p className="text-primary text-sm">
+                  Universal entry code for all events
+                </p>
+              </div>
+              <button
+                onClick={() => setSelectedRegistration(null)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div className="bg-white p-4 rounded-lg mb-4">
+              {qrCodeUrl ? (
+                <img
+                  src={qrCodeUrl}
+                  alt="User QR Code"
+                  className="w-full aspect-square object-contain"
+                />
+              ) : (
+                <div className="w-full aspect-square flex items-center justify-center text-gray-500">
+                  Generating QR Code...
+                </div>
+              )}
+            </div>
+
+            <div className="text-center text-gray-400 text-sm mb-4">
+              <p>Use your single QR code for all event check-ins</p>
+              <p>Admins will choose the appropriate action when scanning</p>
+            </div>
+
+            <div className="space-y-2 text-sm text-gray-400">
+              <div className="flex justify-between">
+                <span>User:</span>
+                <span className="text-white">{user.name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Email:</span>
+                <span className="text-white">{user.email}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Total Events:</span>
+                <span className="text-white">{registrations.length}</span>
+              </div>
+            </div>
+
+            <button
+              onClick={downloadQRCode}
+              disabled={!qrCodeUrl}
+              className="mt-4 w-full px-4 py-3 bg-primary text-black font-bold uppercase text-sm hover:bg-white transition-colors disabled:opacity-50"
+            >
+              Download QR Code
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

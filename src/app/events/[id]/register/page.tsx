@@ -23,6 +23,9 @@ export default function RegisterPage() {
   const [department, setDepartment] = useState("");
   const [year, setYear] = useState("");
 
+  // Terms acceptance
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+
   // Team registration fields
   const [isTeamRegistration, setIsTeamRegistration] = useState(false);
   const [teamName, setTeamName] = useState("");
@@ -93,7 +96,7 @@ export default function RegisterPage() {
   const updateTeamMember = (
     index: number,
     field: keyof TeamMember,
-    value: string | boolean
+    value: string | boolean,
   ) => {
     const updated = [...teamMembers];
     updated[index] = { ...updated[index], [field]: value };
@@ -120,6 +123,11 @@ export default function RegisterPage() {
         return;
       }
 
+      // Validate terms acceptance
+      if (!acceptedTerms) {
+        throw new Error("You must accept the terms and conditions to register");
+      }
+
       let registrationData: RegistrationData;
 
       if (isTeamRegistration) {
@@ -129,23 +137,49 @@ export default function RegisterPage() {
         }
         if (teamMembers.length < (event?.teamSize?.min || 1)) {
           throw new Error(
-            `Minimum ${event?.teamSize?.min} team members required`
+            `Minimum ${event?.teamSize?.min} team members required`,
           );
         }
         if (teamMembers.length > (event?.teamSize?.max || 1)) {
           throw new Error(
-            `Maximum ${event?.teamSize?.max} team members allowed`
+            `Maximum ${event?.teamSize?.max} team members allowed`,
           );
         }
-        for (const member of teamMembers) {
-          if (
-            !member.name ||
-            !member.email ||
-            !member.phoneNumber ||
-            !member.college
-          ) {
+        for (let i = 0; i < teamMembers.length; i++) {
+          const member = teamMembers[i];
+
+          // Validate required fields
+          if (!member.name || !member.name.trim()) {
+            throw new Error(`Team member ${i + 1}: Name is required`);
+          }
+          if (!member.email || !member.email.trim()) {
+            throw new Error(`Team member ${i + 1}: Email is required`);
+          }
+          if (!member.phoneNumber || !member.phoneNumber.trim()) {
+            throw new Error(`Team member ${i + 1}: Phone number is required`);
+          }
+          if (!member.college || !member.college.trim()) {
+            throw new Error(`Team member ${i + 1}: College is required`);
+          }
+
+          // Validate email format
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(member.email)) {
+            throw new Error(`Team member ${i + 1}: Invalid email format`);
+          }
+
+          // Block @citchennai.net domain
+          if (member.email.toLowerCase().endsWith("@citchennai.net")) {
             throw new Error(
-              "All team members must have name, email, phone, and college"
+              `Team member ${i + 1}: Registrations from @citchennai.net domain are not allowed. Please use a different email address.`,
+            );
+          }
+
+          // Validate phone number (10 digits)
+          const phoneRegex = /^[0-9]{10}$/;
+          if (!phoneRegex.test(member.phoneNumber.replace(/[\s\-\(\)]/g, ""))) {
+            throw new Error(
+              `Team member ${i + 1}: Phone number must be 10 digits`,
             );
           }
         }
@@ -158,8 +192,17 @@ export default function RegisterPage() {
         };
       } else {
         // Validate individual registration
-        if (!phoneNumber || !college) {
-          throw new Error("Phone number and college are required");
+        if (!phoneNumber || !phoneNumber.trim()) {
+          throw new Error("Phone number is required");
+        }
+        if (!college || !college.trim()) {
+          throw new Error("College is required");
+        }
+
+        // Validate phone number (10 digits)
+        const phoneRegex = /^[0-9]{10}$/;
+        if (!phoneRegex.test(phoneNumber.replace(/[\s\-\(\)]/g, ""))) {
+          throw new Error("Phone number must be 10 digits");
         }
 
         registrationData = {
@@ -215,12 +258,54 @@ export default function RegisterPage() {
   if (success) {
     return (
       <div className="min-h-screen pt-24 px-4 bg-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-green-500 font-mono text-2xl mb-4">
-            ✓ REGISTRATION SUCCESSFUL
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center p-8 bg-black border border-green-500/30 rounded-lg max-w-md"
+        >
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500/20 flex items-center justify-center">
+            <svg
+              className="w-8 h-8 text-green-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
           </div>
-          <p className="text-gray-400 mb-4">Redirecting to dashboard...</p>
-        </div>
+          <h2 className="text-2xl font-bold text-green-500 mb-2">
+            Registration Successful!
+          </h2>
+          <p className="text-gray-400 mb-4">
+            You have successfully registered for{" "}
+            <span className="text-primary">{event?.title}</span>
+          </p>
+          <p className="text-gray-500 text-sm mb-6">
+            Your QR code will be available in your dashboard. Please show it at
+            the venue for check-in.
+          </p>
+          <div className="flex items-center justify-center gap-2 text-gray-400">
+            <svg
+              className="w-4 h-4 animate-spin"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
+            </svg>
+            <span>Redirecting to dashboard...</span>
+          </div>
+        </motion.div>
       </div>
     );
   }
@@ -239,18 +324,44 @@ export default function RegisterPage() {
           <h2 className="text-3xl md:text-4xl text-primary font-orbitron mb-4">
             {event.title}
           </h2>
-          <div className="text-gray-400 font-mono space-y-1">
-            <div>📅 {new Date(event.date).toLocaleDateString()}</div>
-            <div>
-              ⏰ {event.startTime} - {event.endTime}
+          {event.isTeamEvent && event.teamSize && (
+            <div className="text-gray-400 font-mono mb-4">
+              👥 Team Size: {event.teamSize.min}-{event.teamSize.max} members
             </div>
-            <div>📍 {event.venue}</div>
-            {event.isTeamEvent && event.teamSize && (
-              <div>
-                👥 Team Size: {event.teamSize.min}-{event.teamSize.max} members
-              </div>
-            )}
-          </div>
+          )}
+
+          {/* Event Rules */}
+          {event.rules && event.rules.length > 0 && (
+            <div className="mt-6 p-4 bg-gray-900/50 border border-primary/30 rounded-lg">
+              <h3 className="text-lg font-bold text-primary mb-3 flex items-center gap-2">
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                  />
+                </svg>
+                EVENT RULES
+              </h3>
+              <ul className="space-y-2">
+                {event.rules.map((rule, index) => (
+                  <li
+                    key={index}
+                    className="flex items-start gap-2 text-gray-300 text-sm"
+                  >
+                    <span className="text-primary font-bold">{index + 1}.</span>
+                    <span>{rule}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </motion.div>
 
         <motion.form
@@ -370,10 +481,13 @@ export default function RegisterPage() {
                             updateTeamMember(
                               index,
                               "phoneNumber",
-                              e.target.value
+                              e.target.value,
                             )
                           }
+                          pattern="[0-9]{10}"
+                          title="Phone number must be 10 digits"
                           className="w-full px-3 py-2 bg-black border border-gray-600 text-white rounded focus:border-primary focus:outline-none text-sm"
+                          placeholder="10-digit number"
                           required
                         />
                       </div>
@@ -402,7 +516,7 @@ export default function RegisterPage() {
                             updateTeamMember(
                               index,
                               "department",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           className="w-full px-3 py-2 bg-black border border-gray-600 text-white rounded focus:border-primary focus:outline-none text-sm"
@@ -443,8 +557,10 @@ export default function RegisterPage() {
                     type="tel"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
+                    pattern="[0-9]{10}"
+                    title="Phone number must be 10 digits"
                     className="w-full px-4 py-3 bg-black border border-gray-600 text-white rounded focus:border-primary focus:outline-none"
-                    placeholder="Enter your phone number"
+                    placeholder="10-digit phone number"
                     required
                   />
                 </div>
@@ -493,10 +609,31 @@ export default function RegisterPage() {
             </>
           )}
 
+          {/* Terms and Conditions */}
+          <div className="mt-8 p-4 bg-gray-900/50 border border-gray-700 rounded">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={acceptedTerms}
+                onChange={(e) => setAcceptedTerms(e.target.checked)}
+                className="mt-1 w-5 h-5 rounded border-gray-600 bg-black text-primary focus:ring-primary focus:ring-offset-0 cursor-pointer"
+              />
+              <span className="text-gray-300 text-sm leading-relaxed">
+                I agree to the{" "}
+                <span className="text-primary hover:underline cursor-pointer">
+                  Terms and Conditions
+                </span>{" "}
+                and understand that my registration information will be used for
+                event management purposes. I confirm that all information
+                provided is accurate.
+              </span>
+            </label>
+          </div>
+
           <div className="mt-8 flex gap-4">
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || !acceptedTerms}
               className="flex-1 px-6 py-4 bg-primary text-black font-bold uppercase text-sm hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? "REGISTERING..." : "COMPLETE REGISTRATION"}

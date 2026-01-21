@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { API_URL } from "@/lib/api";
 
 interface User {
   _id: string;
@@ -37,16 +38,11 @@ export default function AdminUsersPage() {
 
   const fetchUsers = async (token: string) => {
     try {
-      const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-        }/api/users`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_URL}/api/users`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!response.ok) {
         if (response.status === 401) {
@@ -74,19 +70,14 @@ export default function AdminUsersPage() {
     if (!token) return;
 
     try {
-      const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-        }/api/users/${userId}/role`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ role: newRole }),
-        }
-      );
+      const response = await fetch(`${API_URL}/api/users/${userId}/role`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ role: newRole }),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to update role");
@@ -119,17 +110,12 @@ export default function AdminUsersPage() {
     if (!token) return;
 
     try {
-      const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-        }/api/admin/users/${userId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_URL}/api/admin/users/${userId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!response.ok) {
         const result = await response.json();
@@ -157,9 +143,9 @@ export default function AdminUsersPage() {
 
     try {
       const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-        }/api/admin/users/search?query=${encodeURIComponent(searchQuery)}`,
+        `${API_URL}/api/admin/users/search?query=${encodeURIComponent(
+          searchQuery
+        )}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -182,12 +168,7 @@ export default function AdminUsersPage() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    window.open(
-      `${
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-      }/api/admin/export/users?token=${token}`,
-      "_blank"
-    );
+    window.open(`${API_URL}/api/admin/export/users?token=${token}`, "_blank");
   };
 
   const filteredUsers =

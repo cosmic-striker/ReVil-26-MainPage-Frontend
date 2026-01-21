@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import EventBackground from "@/components/ui/EventBackground";
 import { fetchEvents } from "@/lib/api";
@@ -21,6 +22,7 @@ const FOCUS_DURATION = 2000;
 const INACTIVITY_DELAY = 10000;
 
 export default function EventsPage() {
+  const router = useRouter();
   const [events, setEvents] = useState<EventViewModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [index, setIndex] = useState(0);
@@ -38,6 +40,8 @@ export default function EventsPage() {
     const loadEvents = async () => {
       try {
         const apiEvents = await fetchEvents();
+
+
         const transformedEvents: EventViewModel[] = apiEvents.map(
           (event: ApiEvent) => ({
             id: event._id,
@@ -125,15 +129,37 @@ export default function EventsPage() {
     setIndex((i) => (i === 0 ? events.length - 1 : i - 1));
   };
 
-  const handleRegisterClick = () => {
-    toast("Coming Soon! 🚀", {
-      icon: "⏳",
+  const handleRegisterClick = (eventId?: string) => {
+    // Check if user is logged in
+    // const token =
+    //   typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+    // if (!token) {
+    //   toast("Please login to register for events", {
+    //     icon: "🔐",
+    //     style: {
+    //       borderRadius: "10px",
+    //       background: "#333",
+    //       color: "#fff",
+    //     },
+    //   });
+    //   router.push("/login");
+    //   return;
+    // }
+    toast("Registrations are coming soon!", {
       style: {
         borderRadius: "10px",
         background: "#333",
         color: "#fff",
       },
     });
+
+    // Use provided eventId or current event from carousel
+    // const targetEventId = eventId || current?.id;
+
+    // if (targetEventId) {
+    //   router.push(`/events/${targetEventId}/register`);
+    // }
   };
 
   if (loading) {
@@ -184,8 +210,8 @@ export default function EventsPage() {
               className="space-y-6"
             >
               <p className="text-gray-400 text-lg">
-                They&apos;re probably debugging their coffee machine or arguing about
-
+                They&apos;re probably debugging their coffee machine or arguing
+                about
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -363,7 +389,7 @@ export default function EventsPage() {
 
                     {/* Your new White Button */}
                     <button
-                      onClick={handleRegisterClick}
+                      onClick={() => handleRegisterClick(current.id)}
                       className="px-6 py-2 mt-4 text-sm bg-white text-black hover:bg-black hover:text-white border border-white font-bold tracking-wider transition-all transform hover:-translate-y-1 uppercase"
                     >
                       Initialize Registration
@@ -398,7 +424,7 @@ export default function EventsPage() {
                         {current.type}
                       </span>
                       <button
-                        onClick={handleRegisterClick}
+                        onClick={() => handleRegisterClick(current.id)}
                         className="h-[42px] px-6 text-sm bg-white text-black hover:bg-black hover:text-white border border-white font-bold tracking-wider transition-all uppercase shadow-[0_0_15px_rgba(0,229,255,0.2)]"
                       >
                         INITIALIZE REGISTRATION
@@ -516,7 +542,7 @@ export default function EventsPage() {
 
                   {/* Register button */}
                   <button
-                    onClick={handleRegisterClick}
+                    onClick={() => handleRegisterClick(ev.id)}
                     className="w-full mt-4 px-4 py-2 text-sm bg-white text-black hover:bg-black hover:text-white border border-white font-bold tracking-wider transition-all uppercase"
                   >
                     Register Now
