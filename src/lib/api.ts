@@ -294,9 +294,10 @@ export async function performCheckIn(
 ): Promise<CheckInResponse> {
   try {
     // Use specific endpoints for building vs session check-in
-    const endpoint = checkInType === "building" 
-      ? `${API_URL}/api/checkin/building`
-      : `${API_URL}/api/checkin/session`;
+    const endpoint =
+      checkInType === "building"
+        ? `${API_URL}/api/checkin/building`
+        : `${API_URL}/api/checkin/session`;
 
     const body: { qrCode: string; eventId?: string } = {
       qrCode, // Send raw QR code value
