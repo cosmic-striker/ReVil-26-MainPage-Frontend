@@ -32,6 +32,30 @@ export default function ContactPage() {
     alert("Message sent! (Simulation)");
   };
 
+  // Funny console warning
+    useEffect(() => {
+        console.log(
+            "%cSECURITY NOTICE (but make it funny)",
+            "color: #00ff00; font-size: 16px; font-weight: bold; text-shadow: 0 0 5px #00ff00;"
+        );
+        console.log(
+            "%cHey there, curious developer!",
+            "color: #ffff00; font-size: 14px; font-weight: bold;"
+        );
+        console.log(
+            "%cYes, we know our Gemini API key is exposed in the client.\n" +
+            "Yes, we're aware this is not production-ready.\n" +
+            "No, we don't recommend doing this in real projects.\n\n" +
+            "So please don't roast us in the comments. We're just vibing here.\n" +
+            "P.S. - If you found this, you're probably cool. Say hi!",
+            "color: #00ffff; font-size: 12px; line-height: 1.5;"
+        );
+        console.log(
+            "%c- Revil Payaluga",
+            "color: #ff00ff; font-size: 12px; font-style: italic;"
+        );
+    }, []);
+
   return (
     <div className="container mx-auto px-4 py-16 relative min-h-screen md:h-screen overflow-y-auto md:overflow-hidden">
       {/* Lanyard Background - Constrained to Right Half */}
@@ -46,7 +70,7 @@ export default function ContactPage() {
       </motion.div>
 
       <motion.div
-        className="relative z-10 h-full flex items-center pointer-events-none mt-10 md:mt-24"
+        className="relative z-10 h-full flex items-center pointer-events-none mt-10"
         initial={{ opacity: 0 }}
         animate={{ opacity: animationState === "finished" ? 1 : 0 }}
         transition={{ duration: 0.5 }}
@@ -76,7 +100,9 @@ export default function ContactPage() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
                     <label className="block text-sm font-mono text-primary mb-2">
+                      <span className="cursor-target">
                       NAME
+                      </span>
                     </label>
                     <input
                       type="text"
@@ -89,7 +115,9 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-mono text-primary mb-2">
+                      <span className="cursor-target">
                       EMAIL
+                      </span>
                     </label>
                     <input
                       type="email"
@@ -102,7 +130,9 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-mono text-primary mb-2">
+                      <span className="cursor-target">
                       MESSAGE
+                      </span>
                     </label>
                     <textarea
                       rows={4}
