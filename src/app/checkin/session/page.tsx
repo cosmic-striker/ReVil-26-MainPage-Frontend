@@ -57,7 +57,10 @@ export default function SessionCheckInPage() {
         setUser(userData);
 
         // Check if user has permission
-        if (userData.role === "admin" || userData.role === "event-team") {
+        if (
+          userData.role === "superadmin" ||
+          userData.role === "event_manager"
+        ) {
           setAuthorized(true);
 
           // Fetch events for selection
@@ -196,8 +199,8 @@ export default function SessionCheckInPage() {
           </div>
           <h2 className="text-red-400 text-xl font-bold mb-2">Access Denied</h2>
           <p className="text-gray-400 mb-6">
-            You need <span className="text-primary">event-team</span> or{" "}
-            <span className="text-primary">admin</span> role to access the
+            You need <span className="text-primary">event_manager</span> or{" "}
+            <span className="text-primary">superadmin</span> role to access the
             session check-in scanner.
           </p>
           <button

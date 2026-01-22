@@ -10,7 +10,7 @@ interface User {
   _id: string;
   name: string;
   email: string;
-  role: "user" | "admin" | "registration-team" | "event-team";
+  role: "user" | "superadmin" | "event_manager" | "registration_team";
   college?: string;
   phoneNumber?: string;
   checkedIn: boolean;
@@ -88,8 +88,8 @@ export default function AdminUsersPage() {
         users.map((user) =>
           user._id === userId
             ? { ...user, role: newRole as User["role"] }
-            : user
-        )
+            : user,
+        ),
       );
       setEditingUserId(null);
     } catch (err: any) {
@@ -100,7 +100,7 @@ export default function AdminUsersPage() {
   const handleDeleteUser = async (userId: string, userName: string) => {
     if (
       !confirm(
-        `Are you sure you want to delete user "${userName}"? This action cannot be undone.`
+        `Are you sure you want to delete user "${userName}"? This action cannot be undone.`,
       )
     ) {
       return;
@@ -144,13 +144,13 @@ export default function AdminUsersPage() {
     try {
       const response = await fetch(
         `${API_URL}/api/admin/users/search?query=${encodeURIComponent(
-          searchQuery
+          searchQuery,
         )}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -249,9 +249,9 @@ export default function AdminUsersPage() {
               >
                 <option value="all">All Roles</option>
                 <option value="user">User</option>
-                <option value="admin">Admin</option>
-                <option value="registration-team">Registration Team</option>
-                <option value="event-team">Event Team</option>
+                <option value="superadmin">Superadmin</option>
+                <option value="registration_team">Registration Team</option>
+                <option value="event_manager">Event Manager</option>
               </select>
             </div>
           </div>
@@ -320,25 +320,25 @@ export default function AdminUsersPage() {
                           className="px-2 py-1 bg-black border border-primary text-white rounded text-sm"
                         >
                           <option value="user">User</option>
-                          <option value="admin">Admin</option>
-                          <option value="registration-team">
+                          <option value="superadmin">Superadmin</option>
+                          <option value="registration_team">
                             Registration Team
                           </option>
-                          <option value="event-team">Event Team</option>
+                          <option value="event_manager">Event Manager</option>
                         </select>
                       ) : (
                         <span
                           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded ${
-                            user.role === "admin"
+                            user.role === "superadmin"
                               ? "bg-red-100 text-red-800"
-                              : user.role === "registration-team"
-                              ? "bg-blue-100 text-blue-800"
-                              : user.role === "event-team"
-                              ? "bg-purple-100 text-purple-800"
-                              : "bg-gray-100 text-gray-800"
+                              : user.role === "registration_team"
+                                ? "bg-blue-100 text-blue-800"
+                                : user.role === "event_manager"
+                                  ? "bg-purple-100 text-purple-800"
+                                  : "bg-gray-100 text-gray-800"
                           }`}
                         >
-                          {user.role}
+                          {user.role.replace(/_/g, " ")}
                         </span>
                       )}
                     </td>

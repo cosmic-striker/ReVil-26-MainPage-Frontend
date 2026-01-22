@@ -191,7 +191,7 @@ export function Navbar() {
                         </svg>
                         Dashboard
                       </button>
-                      {user.role === "admin" && (
+                      {user.role === "superadmin" && (
                         <button
                           onClick={() => {
                             setShowDropdown(false);
@@ -222,9 +222,9 @@ export function Navbar() {
                         </button>
                       )}
                       {/* QR Scanner - for staff roles */}
-                      {(user.role === "admin" ||
-                        user.role === "registration-team" ||
-                        user.role === "event-team") && (
+                      {(user.role === "superadmin" ||
+                        user.role === "registration_team" ||
+                        user.role === "event_manager") && (
                         <button
                           onClick={() => {
                             setShowDropdown(false);
@@ -377,7 +377,7 @@ export function Navbar() {
                       </svg>
                       Dashboard
                     </button>
-                    {user.role === "admin" && (
+                    {user.role === "superadmin" && (
                       <button
                         onClick={() => {
                           setShowDropdown(false);
@@ -408,9 +408,9 @@ export function Navbar() {
                       </button>
                     )}
                     {/* QR Scanner - for staff roles */}
-                    {(user.role === "admin" ||
-                      user.role === "registration-team" ||
-                      user.role === "event-team") && (
+                    {(user.role === "superadmin" ||
+                      user.role === "registration_team" ||
+                      user.role === "event_manager") && (
                       <button
                         onClick={() => {
                           setShowDropdown(false);

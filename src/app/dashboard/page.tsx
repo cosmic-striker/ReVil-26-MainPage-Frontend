@@ -182,7 +182,7 @@ export default function DashboardPage() {
               <div>
                 <label className="block text-gray-500 text-xs">ROLE</label>
                 <div className="text-primary uppercase">
-                  {user.role?.replace("-", " ") || "USER"}
+                  {user.role?.replace(/_/g, " ") || "USER"}
                 </div>
               </div>
               <div>
@@ -373,10 +373,10 @@ export default function DashboardPage() {
                 >
                   Browse Workshops
                 </button>
-                {/* Staff Scanner Link - Only show for admin, registration-team, or event-team */}
-                {(user.role === "admin" ||
-                  user.role === "registration-team" ||
-                  user.role === "event-team") && (
+                {/* Staff Scanner Link - Only show for superadmin, registration_team, or event_manager */}
+                {(user.role === "superadmin" ||
+                  user.role === "registration_team" ||
+                  user.role === "event_manager") && (
                   <button
                     className="px-6 py-3 bg-cyan-500/20 border border-cyan-500/50 text-cyan-400 font-bold uppercase text-sm hover:bg-cyan-500/30 hover:border-cyan-400 transition-colors flex items-center gap-2"
                     onClick={() => router.push("/checkin")}

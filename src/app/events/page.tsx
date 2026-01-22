@@ -149,6 +149,14 @@ export default function EventsPage() {
     //   router.push("/login");
     //   return;
     // }
+
+    // // Use provided eventId or current event from carousel
+
+    // const targetEventId = eventId || current?.id;
+
+    // if (targetEventId) {
+    //   router.push(`/events/${targetEventId}/register`);
+    // }
     toast("Registrations are coming soon!", {
       style: {
         borderRadius: "10px",
@@ -156,13 +164,6 @@ export default function EventsPage() {
         color: "#fff",
       },
     });
-
-    // Use provided eventId or current event from carousel
-    // const targetEventId = eventId || current?.id;
-
-    // if (targetEventId) {
-    //   router.push(`/events/${targetEventId}/register`);
-    // }
   };
 
   if (loading) {

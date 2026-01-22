@@ -47,6 +47,7 @@ export default function RegisterPage() {
         const events = await fetchEvents();
         const foundEvent = events.find((e) => e._id === eventId);
         if (foundEvent) {
+          console.log(foundEvent);
           setEvent(foundEvent);
           setIsTeamRegistration(foundEvent.isTeamEvent || false);
         } else {
@@ -327,6 +328,39 @@ export default function RegisterPage() {
           {event.isTeamEvent && event.teamSize && (
             <div className="text-gray-400 font-mono mb-4">
               👥 Team Size: {event.teamSize.min}-{event.teamSize.max} members
+            </div>
+          )}
+
+          {/* Event Contacts / Coordinators */}
+          {event.contacts && event.contacts.length > 0 && (
+            <div className="mt-2 mb-4 p-4 bg-gray-900/40 border border-gray-800 rounded">
+              <h3 className="text-sm text-primary font-semibold mb-2">
+                Event Coordinators
+              </h3>
+              <ul className="space-y-2">
+                {event.contacts.map((c: any, idx: number) => (
+                  <li
+                    key={idx}
+                    className="text-sm text-gray-300 flex flex-col md:flex-row md:items-center md:gap-4"
+                  >
+                    <div className="font-medium text-white">{c.name}</div>
+                    <div className="text-gray-400">
+                      <a
+                        href={`tel:${c.phone?.replace(/\s+/g, "")}`}
+                        className="hover:underline mr-3"
+                      >
+                        {c.phone}
+                      </a>
+                      <a
+                        href={`mailto:${c.email}`}
+                        className="text-primary hover:underline"
+                      >
+                        {c.email}
+                      </a>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 

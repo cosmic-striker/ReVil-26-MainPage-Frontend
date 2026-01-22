@@ -85,8 +85,8 @@ export default function AdminDashboard() {
       console.log("User profile:", result.data);
       const role = result.data.role;
 
-      if (role !== "admin") {
-        console.log("User is not admin, redirecting to dashboard");
+      if (role !== "superadmin") {
+        console.log("User is not superadmin, redirecting to dashboard");
         setError("You must be an admin to access this page");
         setTimeout(() => {
           router.push("/dashboard");
@@ -184,6 +184,12 @@ export default function AdminDashboard() {
               className="px-4 py-2 bg-primary/20 text-primary border border-primary/50 rounded hover:bg-primary/30 transition-colors text-sm"
             >
               View Registrations
+            </Link>
+            <Link
+              href="/admin/roles"
+              className="px-4 py-2 bg-purple-600/20 text-purple-400 border border-purple-500/50 rounded hover:bg-purple-600/30 transition-colors text-sm font-semibold"
+            >
+              🔐 Manage Roles
             </Link>
           </div>
         </motion.div>
@@ -318,7 +324,7 @@ export default function AdminDashboard() {
                       </div>
                       <div className="text-xs text-gray-500">
                         {Math.round(
-                          (event.currentRegistrations / event.capacity) * 100
+                          (event.currentRegistrations / event.capacity) * 100,
                         )}
                         % filled
                       </div>

@@ -24,13 +24,13 @@ export default function CheckInHubPage() {
         const userData = await fetchUserProfile(token);
         setUser(userData);
 
-        // If user is registration-team only (not admin), redirect directly to building
-        if (userData.role === "registration-team") {
+        // If user is registration_team only (not superadmin), redirect directly to building
+        if (userData.role === "registration_team") {
           router.push("/checkin/building");
           return;
         }
-        // If user is event-team only (not admin), redirect directly to session
-        if (userData.role === "event-team") {
+        // If user is event_manager only (not superadmin), redirect directly to session
+        if (userData.role === "event_manager") {
           router.push("/checkin/session");
           return;
         }
@@ -46,9 +46,9 @@ export default function CheckInHubPage() {
   }, [router]);
 
   const hasAccess =
-    user?.role === "admin" ||
-    user?.role === "registration-team" ||
-    user?.role === "event-team";
+    user?.role === "superadmin" ||
+    user?.role === "registration_team" ||
+    user?.role === "event_manager";
 
   if (loading) {
     return (
@@ -86,9 +86,9 @@ export default function CheckInHubPage() {
           <h2 className="text-red-400 text-xl font-bold mb-2">Access Denied</h2>
           <p className="text-gray-400 mb-6">
             Check-in scanners are only available for staff members with{" "}
-            <span className="text-primary">registration-team</span>,{" "}
-            <span className="text-primary">event-team</span>, or{" "}
-            <span className="text-primary">admin</span> roles.
+            <span className="text-primary">registration_team</span>,{" "}
+            <span className="text-primary">event_manager</span>, or{" "}
+            <span className="text-primary">superadmin</span> roles.
           </p>
           <button
             onClick={() => router.push("/dashboard")}
@@ -102,9 +102,9 @@ export default function CheckInHubPage() {
   }
 
   const canAccessBuilding =
-    user?.role === "admin" || user?.role === "registration-team";
+    user?.role === "superadmin" || user?.role === "registration_team";
   const canAccessSession =
-    user?.role === "admin" || user?.role === "event-team";
+    user?.role === "superadmin" || user?.role === "event_manager";
 
   return (
     <div className="min-h-screen bg-black pt-20 pb-10 px-4">

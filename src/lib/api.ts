@@ -2,10 +2,33 @@
  * API Utility Functions for ReVil 2026
  */
 
+import axios from "axios";
 import { UserProfile, UserWithRegistrations, ApiResponse } from "@/types/api";
 
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+/**
+ * Axios instance with default configuration
+ */
+export const api = axios.create({
+  baseURL: `${API_URL}/api`,
+  headers: {
+    "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "true",
+  },
+});
+
+// Add token to requests if available
+api.interceptors.request.use((config) => {
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
 
 /**
  * Get default avatar URL based on user's name
@@ -153,17 +176,24 @@ export async function registerForEvent(
  */
 export async function fetchEvents(): Promise<import("@/types/api").Event[]> {
   try {
-    // Read from local JSON file instead of backend
-    const response = await fetch("/events-data.json");
+    const response = await fetch(
+      `${API_URL}/api/events?eventType=event&status=upcoming`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
+      },
+    );
 
     if (!response.ok) {
       throw new Error(`Failed to fetch events: ${response.statusText}`);
     }
 
     const data = await response.json();
-    return data.events || [];
+    return data.data || [];
   } catch (error) {
-    console.error("Failed to fetch events from local file:", error);
+    console.error("Failed to fetch events from backend:", error);
     throw error;
   }
 }
@@ -173,17 +203,24 @@ export async function fetchEvents(): Promise<import("@/types/api").Event[]> {
  */
 export async function fetchWorkshops(): Promise<import("@/types/api").Event[]> {
   try {
-    // Read from local JSON file instead of backend
-    const response = await fetch("/workshops-data.json");
+    const response = await fetch(
+      `${API_URL}/api/events?eventType=workshop&status=upcoming`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
+      },
+    );
 
     if (!response.ok) {
       throw new Error(`Failed to fetch workshops: ${response.statusText}`);
     }
 
     const data = await response.json();
-    return data.workshops || [];
+    return data.data || [];
   } catch (error) {
-    console.error("Failed to fetch workshops from local file:", error);
+    console.error("Failed to fetch workshops from backend:", error);
     throw error;
   }
 }

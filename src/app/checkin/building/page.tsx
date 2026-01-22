@@ -54,8 +54,8 @@ export default function BuildingCheckInPage() {
 
         // Check if user has permission
         if (
-          userData.role === "admin" ||
-          userData.role === "registration-team"
+          userData.role === "superadmin" ||
+          userData.role === "registration_team"
         ) {
           setAuthorized(true);
         } else {
@@ -169,8 +169,8 @@ export default function BuildingCheckInPage() {
           </div>
           <h2 className="text-red-400 text-xl font-bold mb-2">Access Denied</h2>
           <p className="text-gray-400 mb-6">
-            You need <span className="text-primary">registration-team</span> or{" "}
-            <span className="text-primary">admin</span> role to access the
+            You need <span className="text-primary">registration_team</span> or{" "}
+            <span className="text-primary">superadmin</span> role to access the
             building check-in scanner.
           </p>
           <button
