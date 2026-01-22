@@ -253,8 +253,20 @@ export async function performCheckIn(
   token: string,
   qrCode: string,
   checkInType: CheckInType,
+  eventId?: string,
 ): Promise<CheckInResponse> {
   try {
+    const body: { qrCode: string; checkInType: CheckInType; eventId?: string } =
+      {
+        qrCode,
+        checkInType,
+      };
+
+    // Add eventId if provided (required for session check-in)
+    if (eventId) {
+      body.eventId = eventId;
+    }
+
     const response = await fetch(`${API_URL}/api/checkin`, {
       method: "POST",
       headers: {
@@ -262,7 +274,7 @@ export async function performCheckIn(
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify({ qrCode, checkInType }),
+      body: JSON.stringify(body),
     });
 
     const data = await response.json();
@@ -295,18 +307,23 @@ export async function performCheckIn(
 export async function verifyQRCode(
   token: string,
   qrCode: string,
+  eventId?: string,
 ): Promise<CheckInResponse> {
   try {
-    const response = await fetch(
-      `${API_URL}/api/checkin/verify/${encodeURIComponent(qrCode)}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
+    const body: { qrCode: string; eventId?: string } = { qrCode };
+    if (eventId) {
+      body.eventId = eventId;
+    }
+
+    const response = await fetch(`${API_URL}/api/checkin/verify`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
-    );
+      credentials: "include",
+      body: JSON.stringify(body),
+    });
 
     const data = await response.json();
     return data;
