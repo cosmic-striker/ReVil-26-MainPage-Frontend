@@ -12,7 +12,7 @@ interface ChatbotProps {
 
 export default function Chatbot({ is3D = false, className = "" }: ChatbotProps) {
     const [messages, setMessages] = useState<{ text: string; isBot: boolean }[]>([
-        { text: "Hi! I'm **Revil Assit**, here to help you with information about Revil events, workshops, and activities. What would you like to know?", isBot: true }
+        { text: "Hi! I'm **Revil Assist**, here to help you with information about Revil events, workshops, and activities. What would you like to know?", isBot: true }
     ]);
     const [input, setInput] = useState("");
     const [isOpen, setIsOpen] = useState(false); // Closed by default
