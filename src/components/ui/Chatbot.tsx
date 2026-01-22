@@ -132,7 +132,9 @@ IMPORTANT INSTRUCTIONS:
 6. Use bullet points and proper formatting to make responses easy to read.
 
 Here's the complete Revil knowledge base:
-${knowledgeBase}
+${knowledgeBase && knowledgeBase.trim().length > 0
+    ? knowledgeBase
+    : "The Revil knowledge base is currently unavailable. You may answer only very general questions about Revil events and must clearly state that some details may be missing in your responses."}
 
 Remember: Stay on topic! Only Revil-related queries get serious answers. Everything else gets a friendly redirect! 🎯`,
             });
